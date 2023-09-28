@@ -129,7 +129,7 @@ public class ConfigManager {
 
         @Override
         public int hashCode() {
-            return processName.hashCode() ^ uid;
+            return Objects.hashCode(processName) ^ uid;
         }
     }
 
@@ -1136,6 +1136,7 @@ public class ConfigManager {
     public List<String> getDenyListPackages() {
         List<String> result = new ArrayList<>();
         if (!getApi().equals("Zygisk")) return result;
+        if (!ConfigFileManager.magiskDbPath.exists()) return result;
         try (final SQLiteDatabase magiskDb =
                      SQLiteDatabase.openDatabase(ConfigFileManager.magiskDbPath, new SQLiteDatabase.OpenParams.Builder().addOpenFlags(SQLiteDatabase.OPEN_READONLY).build())) {
             try (Cursor cursor = magiskDb.query("settings", new String[]{"value"}, "`key`=?", new String[]{"denylist"}, null, null, null)) {
